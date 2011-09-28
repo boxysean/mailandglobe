@@ -1,0 +1,6 @@
+Messy Python app, but here's what you can take away:
+
+- Method to scrape Twitter feed
+- Cache said Twitter feed so you do not need to redownload anything
+
+Required lib: simplejson (to install: easy_install simplejson)
