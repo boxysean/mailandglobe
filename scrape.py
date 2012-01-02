@@ -2,15 +2,34 @@ import urllib2
 import simplejson
 import os
 import random
+import re
+import unicodedata
+import smtplib
+import yaml
 
 CACHE_LASTID = './cache/lastId'
 CACHE_TWEETS = './cache/tweets'
 TWITTER_SCREEN_NAME = 'globeandmail'
 TWEETS = 200
-PAGES = 16
+#PAGES = 16
+PAGES = 1
 MIN_HALF = 10
 
 SPLIT_WORDS = ["as", "of", "on", "in", "if", "at", "to"]
+
+config = yaml.load(file("config.yaml"))
+mconfig = config["mail"]
+
+def unicode2ascii(text):
+    if type(text) == unicode:
+        return unicodedata.normalize("NFKD", text).encode("ascii", "ignore")
+    else:
+        return text
+
+def sendMail(mfrom, to, msg):
+	s = smtplib.SMTP('localhost')
+	s.sendmail(mfrom, [to], msg)
+	s.quit()
 
 def getNewTweets():
     lastId = -1
@@ -129,6 +148,8 @@ for word in SPLIT_WORDS:
             if len(split[0]) > MIN_HALF: splitDict[word][0].append(split[0])
             if len(secondhalf) > MIN_HALF: splitDict[word][1].append(secondhalf)
 
+msg = ""
+
 for tweet in newTweets:
     line = prettify(tweet)
 
@@ -141,27 +162,34 @@ for tweet in newTweets:
         if " " + word + " " not in line:
             continue
 
+        max0 = len(splitDict[word][0])-1
+        max1 = len(splitDict[word][1])-1
+        if max0 <= 0 and max1 <= 0: continue
+
         linesplit = line.split(" " + word + " ")
         linefirsthalf = linesplit[0]
         linesecondhalf = (" " + word + " ").join(linesplit[1:])
 
         if len(linefirsthalf) > MIN_HALF:
             for i in range(10):
-                j = random.randint(0, len(splitDict[word][1])-1)
+                j = random.randint(0, max1)
                 secondhalf = splitDict[word][1][j]
                 choices.append(linefirsthalf + " " + word + " " + secondhalf)
 
         if len(linesecondhalf) > MIN_HALF:
             for i in range(10):
-                j = random.randint(0, len(splitDict[word][0])-1)
+                j = random.randint(0, max0)
                 firsthalf = splitDict[word][0][j]
                 choices.append(firsthalf + " " + word + " " + linesecondhalf)
 
     # so it turns out if we put some random stuff at the end it could also be funny
 
     for word in SPLIT_WORDS:
+        max1 = len(splitDict[word][1])-1
+        if max1 <= 0: continue
+
         for i in range(5):
-            j = random.randint(0, len(splitDict[word][1])-1)
+            j = random.randint(0, max1)
             secondhalf = splitDict[word][1][j]
             choices.append(line + " " + word + " " + secondhalf)
 
@@ -169,31 +197,47 @@ for tweet in newTweets:
 
     choices = list(set(choices))
 
-    choices.sort()
+    # replace all double spaces
+
+    choices = map(lambda x : re.sub(r' +', ' ', x), choices)
+
+    # remove any over 140 chars
+
+    choices = filter(lambda x : len(x) <= 140, choices)
+
+    # replace apostrophe
+
+    choices = map(lambda x : unicode2ascii(x), choices)
 
     # okay now write 20 of these randomly
     
-    if not os.path.exists('./newtweets/'):
-        os.mkdir('./newtweets/')
-
-    f = open('./newtweets/' + str(tweet["id"]), 'w')
-
-#    for i in range(min(20, len(choices)-1)):
-#        rand = random.randint(0, len(choices)-1)
+#    if not os.path.exists('./newtweets/'):
+#        os.mkdir('./newtweets/')
 #
-#        try:
-#            f.write(choices[rand])
-#        except:
-#            x = 1
-#
-#        f.write('\n')
-#        del choices[rand]
+#    f = open('./newtweets/' + str(tweet["id"]), 'w')
+
+    random.shuffle(choices)
+    choices = choices[0:min(20, len(choices)-1)]
+    choices.sort()
 
     for choice in choices:
-        try:
-            f.write(choice + "\n")
-        except:
-            x = 1
+        msg += choice + "\n\n"
 
-    f.close()
+#    for choice in choices:
+#        try:
+#            f.write(choice)
+#            f.write("\n\n")
+#        except:
+#            print choice
+#            pass
 
+#    for choice in choices:
+#        try:
+#            f.write(choice + "\n")
+#        except:
+#            x = 1
+
+#    f.close()
+
+print msg
+sendMail(mconfig["server"], mconfig["client"], msg)

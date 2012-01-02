@@ -3,4 +3,6 @@ include/
 lib/
 cache/
 newtweets/
-.Python/
+.Python
+
+config.yaml
