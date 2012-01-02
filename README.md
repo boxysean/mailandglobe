@@ -80,11 +80,11 @@ The operator replies to the email containing only frankentweets that she wishes 
 
 ## Installation Instructions
 
-1. Make sure the computer you are running this on can send (SMTP) and receive email (e.g., Exim)
+1. Make sure the computer running this can send (SMTP) and receive email (e.g., Exim)
 2. Grab code
 3. Install [python-twitter](http://code.google.com/p/python-twitter/)
 4. Install `simplejson` and `pyyaml` (using [pip](http://pypi.python.org/pypi/pip))
-5. Enable API access to your Twitter account (see below)
+5. Enable API access to Twitter account (see below)
 6. Add `config.yaml` (see below)
 7. Test scripts by running `tweets.sh` and `mail.sh`
 8. Add cron jobs (see below) to crontab
