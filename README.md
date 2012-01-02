@@ -84,10 +84,36 @@ The operator replies to the email containing only frankentweets that she wishes 
 2. Grab code
 3. Install [python-twitter](http://code.google.com/p/python-twitter/)
 4. Install `simplejson` and `pyyaml` (using [pip](http://pypi.python.org/pypi/pip))
-5. Test scripts by running `tweets.sh` and `mail.sh`
-6. Add cron jobs (below) to crontab
+5. Add an application to your Twitter account (see below)
+6. Add config.yaml (see below)
+7. Test scripts by running `tweets.sh` and `mail.sh`
+8. Add cron jobs (below) to crontab
 
-### Cron jobs:
+### Twitter app
+
+Follow [these instructions](https://dev.twitter.com/docs/auth/tokens-devtwittercom) to allow API access to your Twitter account. Make sure to allow "Read and Write" access.
+
+### config.yaml
+
+Copy and paste this into config.yaml in your code directory.
+
+    twitter:
+        consumer_key: findit
+        consumer_secret: findit
+        access_token: findit
+        access_token_secret: findit
+        scrape_screen_name: globeandmail
+        
+        number_of_tweets: 2000
+    
+    mail:
+        mailbox_file: /path/to/unix/mbox
+        client_address: my@inbox.com
+        server_address: my@server.com
+        subject_line: mailandglobe
+        last_check_file: lastCheck
+
+### cron
 
     # @mailandglobe
     # generate possible frankentweets on the hour
@@ -95,7 +121,7 @@ The operator replies to the email containing only frankentweets that she wishes 
     0 * * * *    /root/workspace/mailandglobe/tweets.sh
     30 * * * *   /root/workspace/mailandglobe/mail.sh
 
-### Known to work on:
+### Known to work on
 
 - a Linode share running Ubuntu 10.04
 - using Python 2.6.5
