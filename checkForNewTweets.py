@@ -6,21 +6,22 @@ import re
 import unicodedata
 import smtplib
 import yaml
+import time
 
 from email.mime.text import MIMEText
 
 CACHE_LASTID = './cache/lastId'
 CACHE_TWEETS = './cache/tweets'
-TWITTER_SCREEN_NAME = 'globeandmail'
-TWEETS = 200
-PAGES = 16
-#PAGES = 1
+
+TWEETS_PER_PAGE = 200
+
 MIN_HALF = 10
 
-SPLIT_WORDS = ["as", "of", "on", "in", "if", "at", "to"]
+SPLIT_WORDS = ["as", "of", "on", "in", "if", "at", "to", "and"]
 
 config = yaml.load(file("config.yaml"))
 mconfig = config["mail"]
+tw = config["twitter"]
 
 def unicode2ascii(text):
     if type(text) == unicode:
@@ -39,7 +40,7 @@ def sendMail(mfrom, to, body):
 	s.sendmail(mfrom, [to], msg.as_string())
 	s.quit()
 
-def getNewTweets():
+def getNewTweets(screenName, numberOfTweets):
     lastId = -1
     res = []
 
@@ -52,28 +53,44 @@ def getNewTweets():
 
     page = 0
 
-    while page < PAGES: # max number of pages (of 200 tweets per page)
-        url = 'https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name={0}&count={1}&page={2}'.format(TWITTER_SCREEN_NAME, TWEETS, page)
+    pages = numberOfTweets / TWEETS_PER_PAGE
+    tweetsRem = numberOfTweets
+
+    while page < pages: # max number of pages (of 200 tweets per page)
+        nTweets = min(TWEETS_PER_PAGE, tweetsRem)
+        url = 'https://api.twitter.com/1/statuses/user_timeline.json?include_entities=true&include_rts=true&screen_name={0}&count={1}&page={2}'.format(screenName, nTweets, page)
 
         if lastId >= 0:
             url += "&since_id=" + lastId
 
-        print "Fetching page", page, url
-        response = urllib2.urlopen(url).read()
-        json_response = simplejson.loads(response)
-        res += json_response
+        attempts = 0
 
-        # If there are less than TWEETS responses, then check the next page
+        while attempts < 5:
+            try:
+                print "Fetching page", page, url
+                response = urllib2.urlopen(url).read()
+                json_response = simplejson.loads(response)
+                res += json_response
+                break
+            except:
+                print "Failed, retrying in", 1 << atempts, "seconds"
+                time.sleep(1 << attempts)
+                attempts = attempts + 1
 
-        if len(json_response) < TWEETS:
+        # If there are less than nTweets responses,
+        # then that's probably all of the tweets
+
+        if len(json_response) < nTweets:
             break
 
+        tweetsRem = tweetsRem - TWEETS_PER_PAGE
         page += 1
 
     return res
 
 def getCachedTweets():
-    print "Get cached tweets"
+    # print "Get cached tweets"
+
     if os.path.exists(CACHE_TWEETS):
         f = open(CACHE_TWEETS, 'r')
         res = simplejson.loads(f.read())
@@ -83,7 +100,7 @@ def getCachedTweets():
         return []
 
 def storeTweets(tweets, lastId):
-    print "Storing tweets"
+    # print "Storing tweets"
 
     if not os.path.exists('./cache/'):
         os.mkdir('./cache/')
@@ -125,7 +142,7 @@ def prettify(tweet):
     return ftext
     
 
-newTweets = getNewTweets()
+newTweets = getNewTweets(tw["scrape_screen_name"], tw["number_of_tweets"])
 cachedTweets = getCachedTweets()
 
 print "New tweets: %d" % len(newTweets)
@@ -205,10 +222,6 @@ for tweet in newTweets:
 
     choices = list(set(choices))
 
-    # replace all double spaces
-
-    choices = map(lambda x : re.sub(r' +', ' ', x), choices)
-
     # remove any over 140 chars
 
     choices = filter(lambda x : len(x) <= 140, choices)
@@ -217,37 +230,22 @@ for tweet in newTweets:
 
     choices = map(lambda x : unicode2ascii(x), choices)
 
+    # replace all double spaces
+
+    choices = map(lambda x : re.sub(r' +', ' ', x), choices)
+
     # okay now write 20 of these randomly
     
-#    if not os.path.exists('./newtweets/'):
-#        os.mkdir('./newtweets/')
-#
-#    f = open('./newtweets/' + str(tweet["id"]), 'w')
-
     random.shuffle(choices)
     choices = choices[0:min(20, len(choices)-1)]
     choices.sort()
+
+    msg += "- " + unicode2ascii(line) + "\n"
 
     for choice in choices:
         msg += choice + "\n"
 
     msg += "\n"
-
-#    for choice in choices:
-#        try:
-#            f.write(choice)
-#            f.write("\n\n")
-#        except:
-#            print choice
-#            pass
-
-#    for choice in choices:
-#        try:
-#            f.write(choice + "\n")
-#        except:
-#            x = 1
-
-#    f.close()
 
 if len(msg):
 	sendMail(mconfig["server"], mconfig["client"], msg)

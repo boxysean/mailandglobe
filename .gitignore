@@ -6,4 +6,4 @@ newtweets/
 .Python
 
 config.yaml
-maildaemon/lastCheck
+lastCheck

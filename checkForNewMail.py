@@ -44,16 +44,15 @@ def getApi():
 
 mconfig = config["mail"]
 
-mb = mailbox.UnixMailbox(file(mconfig["file"], "r"))
+mb = mailbox.UnixMailbox(file(mconfig["mailbox_file"], "r"))
 
 lastCheck = 0
 lastCheckFile = None
 
 try:
-	lastCheckFile = file(mconfig["lastCheckFile"], "r")
+	lastCheckFile = file(mconfig["last_check_file"], "r")
 	lastCheck = int(lastCheckFile.read())
 except:
-	print "no last check"
 	pass
 finally:
 	if lastCheckFile:
@@ -64,8 +63,8 @@ finally:
 msg = mb.next()
 
 while msg is not None:
-	fromMatches = re.search(mconfig["client"], msg.unixfrom)
-	subjectMatches = re.search(mconfig["subject"], msg["subject"])
+	fromMatches = re.search(mconfig["client_address"], msg.unixfrom)
+	subjectMatches = re.search(mconfig["subject_address"], msg["subject_line"])
 
 	if fromMatches and subjectMatches:
 		t = time.strptime(msg["date"], "%a, %d %b %Y %H:%M:%S -0500")
@@ -82,7 +81,7 @@ while msg is not None:
 				api.PostUpdate(line)
 #				print "tweet:", line
 
-		lastCheckFile = open(mconfig["lastCheckFile"], "w")
+		lastCheckFile = open(mconfig["last_check_file"], "w")
 		lastCheckFile.write(str(int(time.mktime(t))))
 		lastCheckFile.close()
 
