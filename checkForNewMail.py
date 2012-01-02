@@ -4,7 +4,7 @@ import yaml
 import time
 import twitter
 
-config = yaml.load(file("../config.yaml"))
+config = yaml.load(file("config.yaml"))
 api = None
 
 def combineLines(lines):
@@ -64,7 +64,7 @@ msg = mb.next()
 
 while msg is not None:
 	fromMatches = re.search(mconfig["client_address"], msg.unixfrom)
-	subjectMatches = re.search(mconfig["subject_address"], msg["subject_line"])
+	subjectMatches = re.search(mconfig["subject_line"], msg["subject"])
 
 	if fromMatches and subjectMatches:
 		t = time.strptime(msg["date"], "%a, %d %b %Y %H:%M:%S -0500")

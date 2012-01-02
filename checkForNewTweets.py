@@ -248,4 +248,4 @@ for tweet in newTweets:
     msg += "\n"
 
 if len(msg):
-	sendMail(mconfig["server"], mconfig["client"], msg)
+	sendMail(mconfig["server_address"], mconfig["client_address"], msg)
