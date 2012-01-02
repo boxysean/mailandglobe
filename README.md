@@ -84,12 +84,12 @@ The operator replies to the email containing only frankentweets that she wishes 
 2. Grab code
 3. Install [python-twitter](http://code.google.com/p/python-twitter/)
 4. Install `simplejson` and `pyyaml` (using [pip](http://pypi.python.org/pypi/pip))
-5. Add an application to your Twitter account (see below)
-6. Add config.yaml (see below)
+5. Enable API access to your Twitter account (see below)
+6. Add `config.yaml` (see below)
 7. Test scripts by running `tweets.sh` and `mail.sh`
-8. Add cron jobs (below) to crontab
+8. Add cron jobs (see below) to crontab
 
-### Twitter app
+### Enable Twitter API access
 
 Follow [these instructions](https://dev.twitter.com/docs/auth/tokens-devtwittercom) to allow API access to your Twitter account. Make sure to allow "Read and Write" access.
 
