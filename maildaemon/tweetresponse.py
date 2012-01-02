@@ -78,9 +78,9 @@ while msg is not None:
 			body = msg.fp.read()
 			lines = combineLines(body.splitlines())
 			for line in lines:
-#				api = tweet.getApi()
-#				api.PostUpdate(line)
-				print "tweet:", line
+				api = getApi()
+				api.PostUpdate(line)
+#				print "tweet:", line
 
 		lastCheckFile = open(mconfig["lastCheckFile"], "w")
 		lastCheckFile.write(str(int(time.mktime(t))))

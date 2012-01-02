@@ -7,12 +7,14 @@ import unicodedata
 import smtplib
 import yaml
 
+from email.mime.text import MIMEText
+
 CACHE_LASTID = './cache/lastId'
 CACHE_TWEETS = './cache/tweets'
 TWITTER_SCREEN_NAME = 'globeandmail'
 TWEETS = 200
-#PAGES = 16
-PAGES = 1
+PAGES = 16
+#PAGES = 1
 MIN_HALF = 10
 
 SPLIT_WORDS = ["as", "of", "on", "in", "if", "at", "to"]
@@ -26,9 +28,15 @@ def unicode2ascii(text):
     else:
         return text
 
-def sendMail(mfrom, to, msg):
+def sendMail(mfrom, to, body):
+	msg = MIMEText(body)
+
+	msg["Subject"] = "mailandglobe"
+	msg["From"] = mfrom
+	msg["To"] = to
+
 	s = smtplib.SMTP('localhost')
-	s.sendmail(mfrom, [to], msg)
+	s.sendmail(mfrom, [to], msg.as_string())
 	s.quit()
 
 def getNewTweets():
@@ -221,7 +229,9 @@ for tweet in newTweets:
     choices.sort()
 
     for choice in choices:
-        msg += choice + "\n\n"
+        msg += choice + "\n"
+
+    msg += "\n"
 
 #    for choice in choices:
 #        try:
@@ -239,5 +249,5 @@ for tweet in newTweets:
 
 #    f.close()
 
-print msg
-sendMail(mconfig["server"], mconfig["client"], msg)
+if len(msg):
+	sendMail(mconfig["server"], mconfig["client"], msg)
