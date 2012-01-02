@@ -13,17 +13,17 @@ Given a database of N tweets, a *frankentweet* is
 
 ### Examples
 
-Tweet_1: European stocks higher on first trading day of 2012: tgam.ca/DN9s (Jan 2, 2012)
-Tweet_2: US seals deal on $3.48-billion sale of missiles, technology to UAE: http://tgam.ca/DNYo (Dec 31, 2011)
-**Frankentweet:** European stocks higher on $3.48-billion sale of missiles, technology to UAE
-
-Tweet_1: Patriots' Brady becomes third QB in NFL history with 5,000 yards in season: tgam.ca/DN4N (Jan 1, 2012)
-Tweet_2: Vancouver police to investigate death of man in Surrey RCMP custody: http://tgam.ca/DN19 (Dec 31, 2011)
-**Frankentweet:** Patriots' Brady becomes third QB in Surrey RCMP custody
-
-Tweet_1: Bobby Orr inspires Canada to win over U.S. at World Juniors: tgam.ca/DN2J (Dec 31, 2011)
-Tweet_2: Top showdowns at the parenting corral of 2011: http://tgam.ca/DNJp (Dec 29, 2011)
-**Frankentweet:** Bobby Orr inspires Canada to win over U.S. at the parenting corral of 2011
+    Frankentweet: European stocks higher on $3.48-billion sale of missiles, technology to UAE
+    Tweet_1: European stocks higher on first trading day of 2012: tgam.ca/DN9s (Jan 2, 2012)
+    Tweet_2: US seals deal on $3.48-billion sale of missiles, technology to UAE: http://tgam.ca/DNYo (Dec 31, 2011)
+    
+    Frankentweet: Patriots' Brady becomes third QB in Surrey RCMP custody
+    Tweet_1: Patriots' Brady becomes third QB in NFL history with 5,000 yards in season: tgam.ca/DN4N (Jan 1, 2012)
+    Tweet_2: Vancouver police to investigate death of man in Surrey RCMP custody: http://tgam.ca/DN19 (Dec 31, 2011)
+    
+    Frankentweet: Bobby Orr inspires Canada to win over U.S. at the parenting corral of 2011
+    Tweet_1: Bobby Orr inspires Canada to win over U.S. at World Juniors: tgam.ca/DN2J (Dec 31, 2011)
+    Tweet_2: Top showdowns at the parenting corral of 2011: http://tgam.ca/DNJp (Dec 29, 2011)
 
 ### Grammar
 
