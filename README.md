@@ -16,11 +16,11 @@ Given a database of N tweets, a *frankentweet* is
     Frankentweet: European stocks higher on $3.48-billion sale of missiles, technology to UAE
     Tweet_1: European stocks higher on first trading day of 2012: tgam.ca/DN9s (Jan 2, 2012)
     Tweet_2: US seals deal on $3.48-billion sale of missiles, technology to UAE: http://tgam.ca/DNYo (Dec 31, 2011)
-    
+
     Frankentweet: Patriots' Brady becomes third QB in Surrey RCMP custody
     Tweet_1: Patriots' Brady becomes third QB in NFL history with 5,000 yards in season: tgam.ca/DN4N (Jan 1, 2012)
     Tweet_2: Vancouver police to investigate death of man in Surrey RCMP custody: http://tgam.ca/DN19 (Dec 31, 2011)
-    
+
     Frankentweet: Bobby Orr inspires Canada to win over U.S. at the parenting corral of 2011
     Tweet_1: Bobby Orr inspires Canada to win over U.S. at World Juniors: tgam.ca/DN2J (Dec 31, 2011)
     Tweet_2: Top showdowns at the parenting corral of 2011: http://tgam.ca/DNJp (Dec 29, 2011)
@@ -36,7 +36,9 @@ Given a database of N tweets, a *frankentweet* is
 
 ## How it works
 
-These scripts nag the feed operator by bombarding her email inbox with a subset of possible @mailandglobe frankentweets using the latest and cached @globeandmail tweets. The operator replies to the email containing only frankentweets that she wishes to be tweeted, and the scripts tweet them for her.
+These scripts nag the feed operator by bombarding her email inbox with a subset of possible @mailandglobe frankentweets using the latest and cached @globeandmail tweets.
+
+The operator replies to the email containing only frankentweets that she wishes to be tweeted, and the scripts tweet them for her.
 
 ### Example
 
@@ -76,14 +78,16 @@ These scripts nag the feed operator by bombarding her email inbox with a subset 
 
     > End of a love story? So-called gay penguins at Winter Classic
 
-## Installation
+## Installation Instructions
 
-Known to work on:
+1. Make sure the computer you are running this on can send (SMTP) and receive email (e.g., Exim)
+2. Grab code
+3. Install [python-twitter](http://code.google.com/p/python-twitter/)
+4. Install `simplejson` and `pyyaml` (using [pip](http://pypi.python.org/pypi/pip))
+5. Test scripts by running `tweets.sh` and `mail.sh`
+6. Add cron jobs (below) to crontab
 
-- a Linode share running Ubuntu 10.04
-- Python 2.6.5
-
-Cron jobs:
+### Cron jobs:
 
     # @mailandglobe
     # generate possible frankentweets on the hour
@@ -91,4 +95,8 @@ Cron jobs:
     0 * * * *    /root/workspace/mailandglobe/tweets.sh
     30 * * * *   /root/workspace/mailandglobe/mail.sh
 
-tbc
+### Known to work on:
+
+- a Linode share running Ubuntu 10.04
+- using Python 2.6.5
+
